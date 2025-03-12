@@ -1,0 +1,211 @@
+﻿@model JuanSarmientoApp.Models.Persona
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Crear Persona";
+}
+
+<h2 class="mb-4">Crear Nueva Persona</h2>
+
+<form action="/Persona/Create" method="post">
+    <div class="row">
+        <!-- Columna Izquierda: Datos de Persona + Habilidades + Competencias -->
+        <div class="col-md-6">
+            <div class="border p-2 mb-3 rounded">
+            <div class="mb-3">
+                <label class="form-label fw-bold">Nombre</label>
+                <input type="text" name="Nombre" class="form-control" pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$" required
+                       title="Solo se permiten letras y espacios." />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">Dirección</label>
+                <input type="text" name="Direccion" class="form-control" required />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">Teléfono</label>
+                <input type="text" name="Telefono" class="form-control" required />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">Correo Electrónico</label>
+                <input type="email" name="CorreoElectronico" class="form-control" required />
+            </div>
+            </div>
+
+            <!--  Habilidades -->
+            <div class="form-group">
+                <label class="fw-bold">Habilidades</label>
+                <div class="border p-2 rounded">
+                    @foreach (var habilidad in ViewBag.Habilidades)
+                    {
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="HabilidadesSeleccionadas" value="@habilidad.HabilidadID">
+                            <label class="form-check-label">@habilidad.NombreHabilidad</label>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!--  Competencias -->
+            <div class="form-group">
+                <label class="fw-bold">Competencias</label>
+                <div class="border p-2 rounded">
+                    @foreach (var competencia in ViewBag.Competencias)
+                    {
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="CompetenciasSeleccionadas" value="@competencia.CompetenciaID">
+                            <label class="form-check-label">@competencia.NombreCompetencia</label>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Columna Derecha: Educación + Experiencia Laboral -->
+        <div class="col-md-6">
+            <!--  SECCIÓN EDUCACIÓN -->
+            <div class="form-group">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <label class="fw-bold">Educación</label>
+                    </div>
+                    <div class="col-auto">
+                        <button type="button" class="btn btn-success btn-sm mb-2" onclick="agregarEducacion()">+ Añadir más estudios</button>
+                    </div>
+                </div>
+                <div id="educacionContainer">
+                    <!-- Aquí irían los campos de educación dinámicos -->
+                </div>
+            </div>
+
+            <!--  SECCIÓN EXPERIENCIA LABORAL -->
+            <div class="form-group">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <label class="fw-bold">Experiencia Laboral</label>
+                    </div>
+                    <div class="col-auto">
+                        <button type="button" class="btn btn-success btn-sm mb-2" onclick="agregarExperiencia()">+ Añadir nueva experiencia</button>
+                    </div>
+                </div>
+                <div id="experienciaContainer">
+                    <!-- Aquí irían los campos de experiencia dinámicos -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Botones Centrados -->
+    <div class="d-flex justify-content-center mt-3 mb-4">
+        <button type="submit" class="btn btn-success me-2">
+            <i class="bi bi-person-plus"></i> Guardar Persona
+        </button>
+        <a href="/Persona/Index" class="btn btn-danger">
+            <i class="bi bi-x-circle"></i> Cancelar
+        </a>
+    </div>
+</form>
+
+
+<script>
+
+    document.querySelector("input[name='Nombre']").addEventListener("input", function () {
+        this.value = this.value.replace(/[^A-Za-zÁÉÍÓÚáéíóúÑñ\s]/g, '');
+    });
+
+    document.querySelector("form").addEventListener("submit", function (event) {
+        let educacionItems = document.querySelectorAll(".educacion-item");
+        let experienciaItems = document.querySelectorAll(".experiencia-item");
+        let habilidadesSeleccionadas = document.querySelectorAll("input[name='HabilidadesSeleccionadas']:checked").length;
+        let competenciasSeleccionadas = document.querySelectorAll("input[name='CompetenciasSeleccionadas']:checked").length;
+
+        if (educacionItems.length === 0) {
+            alert("Debes agregar al menos una educación.");
+            event.preventDefault(); 
+            return;
+        }
+
+        if (experienciaItems.length === 0) {
+            alert("Debes agregar al menos una experiencia laboral.");
+            event.preventDefault(); 
+        }
+
+        if (habilidadesSeleccionadas === 0) {
+            alert("Debes seleccionar al menos una habilidad.");
+            event.preventDefault(); 
+            return;
+        }
+
+        if (competenciasSeleccionadas === 0) {
+            alert("Debes seleccionar al menos una competencia.");
+            event.preventDefault(); 
+        }
+    });
+
+        function actualizarIndices(containerClassName, namePrefix) {
+        var items = document.querySelectorAll(`.${containerClassName}`);
+        items.forEach((item, index) => {
+            item.querySelectorAll('input, textarea').forEach(input => {
+                var name = input.getAttribute('name');
+                var newName = name.replace(new RegExp(`${namePrefix}\\[\\d+\\]`), `${namePrefix}[${index}]`);
+                input.setAttribute('name', newName);
+            });
+        });
+    }
+
+    function agregarEducacion() {
+        var container = document.getElementById("educacionContainer");
+        var index = document.querySelectorAll(".educacion-item").length;
+
+        var div = document.createElement("div");
+        div.classList.add("educacion-item", "mb-3");
+        div.innerHTML = `
+            <div class="border p-2 mb-3 rounded">
+            <input type="text" name="Educacion[${index}].Institucion" class="form-control mb-2" placeholder="Institución" required />
+            <input type="text" name="Educacion[${index}].TituloObtenido" class="form-control mb-2" placeholder="Título Obtenido" required />
+            <input type="date" name="Educacion[${index}].FechaGraduacion" class="form-control mb-2" required />
+            <button type="button" class="btn btn-danger btn-sm" onclick="eliminarEducacion(this)">Eliminar</button>
+            </div>
+        `;
+        container.appendChild(div);
+    }
+
+    function eliminarEducacion(button) {
+        var item = button.closest('.educacion-item');
+        item.remove();
+        actualizarIndices('educacion-item', 'Educacion');
+    }
+
+    function agregarExperiencia() {
+        var container = document.getElementById("experienciaContainer");
+        var index = document.querySelectorAll(".experiencia-item").length;
+
+        var div = document.createElement("div");
+        div.classList.add("experiencia-item", "mb-3");
+        div.innerHTML = `
+            <div class="border p-2 mb-3 rounded">
+            <input type="text" name="ExperienciaLaboral[${index}].Empresa" class="form-control mb-2" placeholder="Empresa" required />
+            <input type="text" name="ExperienciaLaboral[${index}].Cargo" class="form-control mb-2" placeholder="Cargo" required />
+            <input type="date" name="ExperienciaLaboral[${index}].FechaInicio" class="form-control mb-2" required />
+            <input type="date" name="ExperienciaLaboral[${index}].FechaFin" class="form-control mb-2" />
+            <textarea name="ExperienciaLaboral[${index}].Responsabilidades" class="form-control mb-2" placeholder="Responsabilidades" required ></textarea>
+            <button type="button" class="btn btn-danger btn-sm" onclick="eliminarExperiencia(this)">Eliminar</button>
+            </div>
+        `;
+        container.appendChild(div);
+    }
+
+    function eliminarExperiencia(button) {
+        var item = button.closest('.experiencia-item');
+        item.remove();
+        actualizarIndices('experiencia-item', 'ExperienciaLaboral');
+    }
+    
+    document.addEventListener("DOMContentLoaded", function () {
+        agregarEducacion();  
+        agregarExperiencia(); 
+    });    
+
+</script>

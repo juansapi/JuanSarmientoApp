@@ -1,0 +1,66 @@
+﻿@model JuanSarmientoApp.Models.Persona
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Detalles de Persona";
+}
+
+<h2>@Model.Nombre</h2>
+
+<div class="row align-items-start">
+    <div class="col-md-6">
+        <h3>Información Personal</h3>
+        <ul class="list-group">
+            <li class="list-group-item"><strong>Dirección:</strong> @Model.Direccion</li>
+            <li class="list-group-item"><strong>Teléfono:</strong> @Model.Telefono</li>
+            <li class="list-group-item"><strong>Correo Electrónico:</strong> @Model.CorreoElectronico</li>
+        </ul>
+
+        <h3 class="mt-4">Habilidades</h3>
+        <ul class="list-group">
+            @foreach (var habilidad in Model.PersonaHabilidades)
+            {
+                <li class="list-group-item">@habilidad.Habilidad.NombreHabilidad</li>
+            }
+        </ul>
+
+        <h3 class="mt-4">Competencias</h3>
+        <ul class="list-group">
+            @foreach (var competencia in Model.PersonaCompetencias)
+            {
+                <li class="list-group-item">@competencia.Competencia.NombreCompetencia</li>
+            }
+        </ul>
+    </div>
+
+    <div class="col-md-6">
+        <h3>Educación</h3>
+        <ul class="list-group">
+            @foreach (var edu in Model.Educacion)
+            {
+                <li class="list-group-item"><strong>@edu.TituloObtenido</strong> en @edu.Institucion (@edu.FechaGraduacion.ToString("yyyy-MM-dd"))</li>
+            }
+        </ul>
+
+        <h3 class="mt-4">Experiencia Laboral</h3>
+        <ul class="list-group">
+            @foreach (var exp in Model.ExperienciaLaboral)
+            {
+                <li class="list-group-item">
+                    <strong>@exp.Cargo</strong> en @exp.Empresa (@exp.FechaInicio.ToString("yyyy-MM-dd") - @exp.FechaFin?.ToString("yyyy-MM-dd"))
+                    @if (!string.IsNullOrEmpty(exp.Responsabilidades))
+                    {
+                        <div class="mt-2">
+                            <strong>Responsabilidades:</strong>
+                            <p class="mb-0">@exp.Responsabilidades</p>
+                        </div>
+                    }
+                </li>
+            }
+        </ul>
+    </div>
+</div>
+
+<div class="d-flex justify-content-center mt-3 mb-4">    
+    <a href="/Persona/Index" class="btn btn-secondary mt-3">Volver</a>    
+</div>

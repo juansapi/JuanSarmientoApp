@@ -1,0 +1,215 @@
+﻿@model JuanSarmientoApp.Models.Persona
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Editar Persona";
+}
+
+<h2 class="mb-4">Editar Persona</h2>
+
+<form action="/Persona/Edit" method="post">
+    <input type="hidden" name="PersonaID" value="@Model.PersonaID" />
+
+    <div class="row">
+        <!-- Columna izquierda: Datos personales + Checkboxes -->
+        <div class="col-md-6">
+            <div class="border p-2 mb-3 rounded">
+            <div class="mb-3">
+                <label class="form-label fw-bold">Nombre</label>
+                <input type="text" name="Nombre" class="form-control" value="@Model.Nombre" required pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$" title="Solo se permiten letras y espacios" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">Dirección</label>
+                <input type="text" name="Direccion" class="form-control" value="@Model.Direccion" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">Teléfono</label>
+                <input type="text" name="Telefono" class="form-control" value="@Model.Telefono" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">Correo Electrónico</label>
+                <input type="email" name="CorreoElectronico" class="form-control" value="@Model.CorreoElectronico" required />
+            </div>
+            </div>
+
+            <div class="form-group">
+                <label class="fw-bold">Habilidades</label>
+                <div class="border p-2 rounded">
+                    @foreach (var habilidad in ViewBag.Habilidades)
+                    {
+                        var isChecked = Model.PersonaHabilidades.Any(ph => ph.HabilidadID == habilidad.HabilidadID) ? "checked" : "";
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="HabilidadesSeleccionadas" value="@habilidad.HabilidadID" @isChecked>
+                            <label class="form-check-label">@habilidad.NombreHabilidad</label>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="fw-bold">Competencias</label>
+                <div class="border p-2 rounded">
+                    @foreach (var competencia in ViewBag.Competencias)
+                    {
+                        var isChecked = Model.PersonaCompetencias.Any(pc => pc.CompetenciaID == competencia.CompetenciaID) ? "checked" : "";
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="CompetenciasSeleccionadas" value="@competencia.CompetenciaID" @isChecked>
+                            <label class="form-check-label">@competencia.NombreCompetencia</label>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Columna derecha: Educación y Experiencia Laboral -->
+        <div class="col-md-6">
+            <div class="form-group d-flex align-items-center">
+                <label class="fw-bold mb-0 me-2">Educación</label>
+                <button type="button" class="btn btn-success btn-sm ms-auto" onclick="agregarEducacion()">+ Añadir más estudios</button>
+            </div>
+            <div id="educacion-container">
+                @{
+                    var educacionLista = Model.Educacion.ToList();
+                }
+                @for (int i = 0; i < educacionLista.Count; i++)
+                {
+                    <div class="border p-2 mb-3 rounded">
+                        <input type="hidden" name="Educacion[@i].EducacionID" value="@educacionLista[i].EducacionID" />
+                        <input type="text" name="Educacion[@i].Institucion" class="form-control mb-1" placeholder="Institución" value="@educacionLista[i].Institucion" required />
+                        <input type="text" name="Educacion[@i].TituloObtenido" class="form-control mb-1" placeholder="Título Obtenido" value="@educacionLista[i].TituloObtenido" required />
+                        <input type="date" name="Educacion[@i].FechaGraduacion" class="form-control mb-1" value="@educacionLista[i].FechaGraduacion.ToString("yyyy-MM-dd")" required />
+                        <button type="button" class="btn btn-danger btn-sm" onclick="eliminarElemento(this)">Eliminar</button>
+                    </div>
+                }
+            </div>
+
+            <div class="form-group d-flex align-items-center">
+                <label class="fw-bold mb-0 me-2">Experiencia Laboral</label>
+                <button type="button" class="btn btn-success btn-sm ms-auto" onclick="agregarExperiencia()">+ Añadir nueva experiencia</button>
+            </div>
+            <div id="experiencia-container">
+                @{
+                    var experienciaList = Model.ExperienciaLaboral.ToList();
+                }
+                @for (int i = 0; i < experienciaList.Count; i++)
+                {
+                    <div class="border p-2 mb-3 rounded">
+                        <label class="form-label">Empresa</label>
+                        <input type="text" name="ExperienciaLaboral[@i].Empresa" class="form-control" value="@experienciaList[i].Empresa" required />
+
+                        <label class="form-label">Cargo</label>
+                        <input type="text" name="ExperienciaLaboral[@i].Cargo" class="form-control" value="@experienciaList[i].Cargo" required />
+
+                        <label class="form-label">Fecha Inicio</label>
+                        <input type="date" name="ExperienciaLaboral[@i].FechaInicio" class="form-control" value="@experienciaList[i].FechaInicio.ToString("yyyy-MM-dd")" required />
+
+                        <label class="form-label">Fecha Fin</label>
+                        <input type="date" name="ExperienciaLaboral[@i].FechaFin" class="form-control" value="@(experienciaList[i].FechaFin?.ToString("yyyy-MM-dd"))" />
+
+                        <label class="form-label">Responsabilidades</label>
+                        <textarea name="ExperienciaLaboral[@i].Responsabilidades" class="form-control" rows="3" required>@experienciaList[i].Responsabilidades</textarea>
+
+                        <button type="button" class="btn btn-danger btn-sm" onclick="eliminarElemento(this)">Eliminar</button>
+                    </div>
+                }
+            </div>
+        </div>
+
+    </div>    
+
+    <div class="d-flex justify-content-center mt-3 mb-4">
+        <button type="submit" class="btn btn-success me-2">
+            <i class="bi bi-person-plus"></i> Guardar Cambios
+        </button>
+        <a href="/Persona/Index" class="btn btn-danger">
+            <i class="bi bi-x-circle"></i> Cancelar
+        </a>
+    </div>
+</form>
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+        let nombreInput = document.querySelector("input[name='Nombre']");
+
+        nombreInput.addEventListener("input", function () {
+            this.value = this.value.replace(/[^A-Za-zÁÉÍÓÚáéíóúÑñ\s]/g, '');
+        });
+    });        
+
+        //  Función para agregar una nueva Educación
+    function agregarEducacion() {
+        let container = document.getElementById('educacion-container');
+        let index = container.children.length; // Obtener el índice actual
+
+        let nuevaEducacion = `
+            <div class="border p-2 mb-3 rounded educacion-item">
+                <input type="hidden" name="Educacion[${index}].EducacionID" value="0" />
+                <input type="text" name="Educacion[${index}].Institucion" class="form-control mb-1" placeholder="Institución" required />
+                <input type="text" name="Educacion[${index}].TituloObtenido" class="form-control mb-1" placeholder="Título obtenido" required />
+                <input type="date" name="Educacion[${index}].FechaGraduacion" class="form-control mb-1" required />                
+                <button type="button" class="btn btn-danger btn-sm" onclick="eliminarEducacion(this)">Eliminar</button>
+            </div>
+        `;
+
+        container.insertAdjacentHTML('beforeend', nuevaEducacion);
+    }
+
+    //  Función para eliminar educación y reasignar los índices
+    function eliminarEducacion(boton) {
+        let container = document.getElementById('educacion-container');
+        boton.parentElement.remove();
+
+        // 🔄 Reasignar índices para que sean consecutivos
+        let items = container.getElementsByClassName('educacion-item');
+        for (let i = 0; i < items.length; i++) {
+            items[i].querySelector('[name^="Educacion["][name$=".Institucion"]').setAttribute("name", `Educacion[${i}].Institucion`);
+            items[i].querySelector('[name^="Educacion["][name$=".TituloObtenido"]').setAttribute("name", `Educacion[${i}].TituloObtenido`);
+            items[i].querySelector('[name^="Educacion["][name$=".FechaInicio"]').setAttribute("name", `Educacion[${i}].FechaInicio`);
+            items[i].querySelector('[name^="Educacion["][name$=".FechaFin"]').setAttribute("name", `Educacion[${i}].FechaFin`);
+        }
+    }
+
+        function agregarExperiencia() {
+        let container = document.getElementById('experiencia-container');
+        let index = container.children.length; // Obtener el índice actual
+
+        let nuevaExperiencia = `
+            <div class="border p-2 mb-3 rounded experiencia-item">
+                <input type="hidden" name="ExperienciaLaboral[${index}].ExperienciaLaboralID" value="0" />
+                <input type="text" name="ExperienciaLaboral[${index}].Empresa" class="form-control mb-1" placeholder="Empresa" required />
+                <input type="text" name="ExperienciaLaboral[${index}].Cargo" class="form-control mb-1" placeholder="Cargo" required />
+                <input type="date" name="ExperienciaLaboral[${index}].FechaInicio" class="form-control mb-1" required />
+                <input type="date" name="ExperienciaLaboral[${index}].FechaFin" class="form-control mb-1" />
+                <textarea name="ExperienciaLaboral[${index}].Responsabilidades" class="form-control mb-2" placeholder="Responsabilidades" required></textarea>
+                <button type="button" class="btn btn-danger btn-sm" onclick="eliminarExperiencia(this)">Eliminar</button>
+            </div>
+        `;
+
+        container.insertAdjacentHTML('beforeend', nuevaExperiencia);
+    }
+
+    //  Función para eliminar experiencia y reasignar los índices
+    function eliminarExperiencia(boton) {
+        let container = document.getElementById('experiencia-container');
+        boton.parentElement.remove();
+
+        // 🔄 Reasignar índices para que sean consecutivos
+        let items = container.getElementsByClassName('experiencia-item');
+        for (let i = 0; i < items.length; i++) {
+            items[i].querySelector('[name^="ExperienciaLaboral["][name$=".Empresa"]').setAttribute("name", `ExperienciaLaboral[${i}].Empresa`);
+            items[i].querySelector('[name^="ExperienciaLaboral["][name$=".Cargo"]').setAttribute("name", `ExperienciaLaboral[${i}].Cargo`);
+            items[i].querySelector('[name^="ExperienciaLaboral["][name$=".FechaInicio"]').setAttribute("name", `ExperienciaLaboral[${i}].FechaInicio`);
+            items[i].querySelector('[name^="ExperienciaLaboral["][name$=".FechaFin"]').setAttribute("name", `ExperienciaLaboral[${i}].FechaFin`);
+            items[i].querySelector('[name^="ExperienciaLaboral["][name$=".Responsabilidades"]').setAttribute("name", `ExperienciaLaboral[${i}].Responsabilidades`);
+        }
+    }
+
+
+    function eliminarElemento(button) {
+        button.parentElement.remove();
+    }
+</script>
