@@ -258,4 +258,4 @@ C:\Users\Usuario\source\repos\PruebaAzure\JuanSarmientoApp\obj\Debug\net9.0\comp
 C:\Users\Usuario\source\repos\PruebaAzure\JuanSarmientoApp\obj\Debug\net9.0\compressed\rb4hmravbx-63fj8s7r0e.gz
 C:\Users\Usuario\source\repos\PruebaAzure\JuanSarmientoApp\obj\Debug\net9.0\compressed\texdrptc0b-0j3bgjxly4.gz
 C:\Users\Usuario\source\repos\PruebaAzure\JuanSarmientoApp\obj\Debug\net9.0\compressed\fxjue5ij7i-7cw8ospu67.gz
-C:\Users\Usuario\source\repos\PruebaAzure\JuanSarmientoApp\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt
+C:\Users\Usuario\source\repos\PruebaAzure\JuanSarmientoApp\obj\Debug\net9.0\JuanSarmientoApp.sourcelink.json

@@ -258,3 +258,5 @@ C:\Users\Usuario\source\repos\PruebaAzure\JuanSarmientoApp\obj\Release\net9.0\re
 C:\Users\Usuario\source\repos\PruebaAzure\JuanSarmientoApp\obj\Release\net9.0\JuanSarmientoApp.pdb
 C:\Users\Usuario\source\repos\PruebaAzure\JuanSarmientoApp\obj\Release\net9.0\JuanSarmientoApp.genruntimeconfig.cache
 C:\Users\Usuario\source\repos\PruebaAzure\JuanSarmientoApp\obj\Release\net9.0\ref\JuanSarmientoApp.dll
+C:\Users\Usuario\source\repos\PruebaAzure\JuanSarmientoApp\obj\Release\net9.0\JuanSarmientoApp.sourcelink.json
+C:\Users\Usuario\source\repos\PruebaAzure\JuanSarmientoApp\obj\Release\net9.0\staticwebassets.upToDateCheck.txt
