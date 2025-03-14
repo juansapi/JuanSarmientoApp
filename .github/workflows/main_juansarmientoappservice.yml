@@ -55,4 +55,4 @@ jobs:
           app-name: 'JuanSarmientoAppService'
           slot-name: 'Production'
           package: .
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_EF37CF6264744AA9904664C9AC43AA0C }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_542A19E450CB4634915F3CE0B0AF1476 }}
